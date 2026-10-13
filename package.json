@@ -11,5 +11,5 @@
   "keywords": ["claude-code", "codex", "opencode", "pi", "sessions", "search", "resume", "cli", "agent"],
   "license": "MIT",
   "os": ["darwin", "linux"],
-  "engines": { "node": ">=18" }
+  "engines": { "node": ">=22.13" }
 }

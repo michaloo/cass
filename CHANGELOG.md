@@ -12,6 +12,8 @@ history of the code before this point is casm's, kept in git.
 
 ### Changed
 
+- opencode sessions are read with Node's built-in `node:sqlite` instead of the
+  `sqlite3` CLI, so nothing extra needs installing. Requires Node 22.13+.
 - The command is `cass`, the package `cass-cli`.
 - Bare `cass` opens the continue picker. Help is `cass help`.
 - `resume` and `continue` take a hidden `--print`, which prints the command

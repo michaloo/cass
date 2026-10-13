@@ -77,9 +77,7 @@ cass only reads these. It never writes to them.
 
 ## Requirements
 
-- Node 18+.
-- The `sqlite3` CLI for opencode. Without it, opencode sessions are left out of
-  every listing.
+- Node 22.13+ (opencode's database is read with Node's built-in `node:sqlite`; nothing else to install).
 
 Transcript formats are internal to each agent and change between versions.
 Parsing is defensive (bad lines are skipped), but it can degrade.
