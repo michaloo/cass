@@ -44,7 +44,10 @@ function checkFlags(cmd, args) {
   }
 }
 
-const [cmd, ...rest] = process.argv.slice(2);
+// bare `cass`, with or without options, is the picker: it is what you reach
+// for most. (help and version flags are handled below, before dispatch.)
+const argv = process.argv.slice(2);
+const [cmd, ...rest] = argv.length && !argv[0].startsWith("-") ? argv : ["continue", ...argv];
 const commands = { list: cmdList, search: cmdSearch, show: cmdShow, resume: cmdResume, continue: cmdContinue };
 
 // fileURLToPath, not new URL().pathname: a checkout under a path with a space
@@ -83,13 +86,11 @@ usage:
   }
 }
 
-if (cmd === "help" || cmd === "--help" || cmd === "-h") { help(); process.exit(0); }
-if (cmd === "version" || cmd === "--version" || cmd === "-v") { console.log(version()); process.exit(0); }
+const first = argv[0];
+if (first === "help" || first === "--help" || first === "-h") { help(); process.exit(0); }
+if (first === "version" || first === "--version" || first === "-v") { console.log(version()); process.exit(0); }
 
-// bare `cass` is the picker: it is what you reach for most
-if (!cmd) {
-  Promise.resolve(cmdContinue([])).catch((e) => die(e.message));
-} else if (!commands[cmd]) {
+if (!commands[cmd]) {
   die(`unknown command '${cmd}' - try: cass help`);
 } else {
   checkFlags(cmd, rest);
