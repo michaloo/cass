@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// casm - multi-node coding-agent session manager for Claude Code, opencode, and pi.
+// cass - cross agent session search for Claude Code, Codex, OpenCode and pi.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,18 +28,18 @@ function checkFlags(cmd, args) {
     const name = eq === -1 ? a : a.slice(0, eq);
     if (known.includes(name)) {
       if (eq !== -1 && !VALUE_FLAGS.has(name))
-        die(`option '${name}' for 'casm ${cmd}' does not take a value`);
+        die(`option '${name}' for 'cass ${cmd}' does not take a value`);
       if (VALUE_FLAGS.has(name)) {
         const value = eq === -1 ? args[i + 1] : a.slice(eq + 1);
         if (!value || (eq === -1 && value.startsWith("-")))
-          die(`option '${name}' for 'casm ${cmd}' needs a value`);
+          die(`option '${name}' for 'cass ${cmd}' needs a value`);
         if (eq === -1) i++;
       }
       continue;
     }
     const near = known.find((k) => k.replace(/[^a-z]/g, "").startsWith(name.replace(/[^a-z]/g, "").slice(0, 6)));
-    die(`unknown option '${name}' for 'casm ${cmd}'` +
-        (near ? ` - did you mean ${near}?` : ` - try: casm help`));
+    die(`unknown option '${name}' for 'cass ${cmd}'` +
+        (near ? ` - did you mean ${near}?` : ` - try: cass help`));
   }
 }
 
@@ -51,29 +51,29 @@ const commands = { list: cmdList, search: cmdSearch, show: cmdShow, resume: cmdR
 const version = () =>
   JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "package.json"), "utf8")).version;
 
-// The two things people install casm for. Kept to a headline, one sentence and
+// The two things people install cass for. Kept to a headline, one sentence and
 // something you can paste - the usage above is the reference, this is the part
 // that answers "what is this for".
 const USE_CASES = [
   ["continue from anywhere",
-   "your most recent sessions across every agent, newest first. pick one and\ncasm changes into its directory and resumes it with its own agent.",
-   "casm continue"],
+   "your most recent sessions across every agent, newest first. pick one and\ncass changes into its directory and resumes it with its own agent.",
+   "cass continue"],
   ["search and resume",
    "full-text over every transcript, with the match shown in context.\nthen resume the hit by id.",
-   `casm search "rate limiting"`],
+   `cass search "rate limiting"`],
 ];
 
 function help() {
-  console.log(`casm ${dim(version())} - coding-agent session manager
+  console.log(`cass ${dim(version())} - cross agent session search
 ${dim("  agents:")} claude code ${cyan("cc")} · codex ${blue("cx")} · opencode ${magenta("oc")} · pi ${yellow("pi")}
 
 usage:
-  casm continue [-n 10] [--agent X]              pick a recent session and resume it
-  casm list   [-n 20] [--agent X] [--project P]  newest sessions across agents
-  casm search <term> [-n 25] [--agent X]         full-text search of transcripts
-  casm show   <id-prefix> [-n 30]                preview a conversation
-  casm resume <id-prefix>                        resume with its own agent, in its cwd
-  casm help | casm version                       this screen; the installed version`);
+  cass [continue] [-n 10] [--agent X]            pick a recent session and resume it
+  cass list   [-n 20] [--agent X] [--project P]  newest sessions across agents
+  cass search <term> [-n 25] [--agent X]         full-text search of transcripts
+  cass show   <id-prefix> [-n 30]                preview a conversation
+  cass resume <id-prefix>                        resume with its own agent, in its cwd
+  cass help | cass version                       this screen; the installed version`);
 
   for (const [title, desc, example] of USE_CASES) {
     console.log(`\n${green(title)}`);
@@ -85,11 +85,11 @@ usage:
 if (cmd === "help" || cmd === "--help" || cmd === "-h") { help(); process.exit(0); }
 if (cmd === "version" || cmd === "--version" || cmd === "-v") { console.log(version()); process.exit(0); }
 
+// bare `cass` is the picker: it is what you reach for most
 if (!cmd) {
-  help();
-  process.exit(0);
+  Promise.resolve(cmdContinue([])).catch((e) => die(e.message));
 } else if (!commands[cmd]) {
-  die(`unknown command '${cmd}' - try: casm help`);
+  die(`unknown command '${cmd}' - try: cass help`);
 } else {
   checkFlags(cmd, rest);
   Promise.resolve(commands[cmd](rest)).catch((e) => die(e.message));
