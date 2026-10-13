@@ -7,13 +7,14 @@ import { dim, cyan, green, magenta, yellow, blue, die } from "../lib/util.mjs";
 import { cmdList, cmdSearch, cmdShow, cmdResume, cmdContinue } from "../lib/commands.mjs";
 
 // Every option each command accepts. Anything else that looks like a flag is a
-// mistake and is refused, rather than silently ignored.
+// mistake and is refused, rather than silently ignored. --print is deliberately
+// left out of the help: it prints what resume would run instead of running it.
 const FLAGS = {
   list:     ["-n", "--agent", "--project"],
   search:   ["-n", "--agent"],
   show:     ["-n"],
-  resume:   [],
-  continue: ["-n", "--agent"],
+  resume:   ["--print"],
+  continue: ["-n", "--agent", "--print"],
 };
 
 const VALUE_FLAGS = new Set(["-n", "--agent", "--project"]);
